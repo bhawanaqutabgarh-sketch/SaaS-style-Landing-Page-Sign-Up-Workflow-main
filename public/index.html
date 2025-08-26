@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Your SaaS — Landing</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+  <header class="bg-white shadow">
+    <div class="max-w-5xl mx-auto px-6 py-5 flex justify-between items-center">
+      <div class="text-2xl font-bold">YourSaaS</div>
+      <nav>
+        <a href="#features" class="mr-4">Features</a>
+        <a href="#signup" class="text-indigo-600">Sign up</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-6 py-12">
+    <section class="grid md:grid-cols-2 gap-8 items-center">
+      <div>
+        <h1 class="text-4xl font-extrabold mb-4">Build faster. Ship smarter.</h1>
+        <p class="mb-6 text-gray-700">A concise pitch explaining the product benefits and why users should sign up.</p>
+        <a href="#signup" class="inline-block bg-indigo-600 text-white px-6 py-2 rounded shadow">Get started — it's free</a>
+      </div>
+
+      <div class="bg-white p-6 rounded shadow" id="signup">
+        <h2 class="text-xl font-semibold mb-4">Create your account</h2>
+        <form id="signupForm" class="space-y-3">
+          <div>
+            <label class="block text-sm">Name</label>
+            <input id="name" name="name" required class="w-full border px-3 py-2 rounded" />
+          </div>
+          <div>
+            <label class="block text-sm">Email</label>
+            <input id="email" name="email" type="email" required class="w-full border px-3 py-2 rounded" />
+          </div>
+          <div>
+            <label class="block text-sm">Password</label>
+            <input id="password" name="password" type="password" minlength="6" required class="w-full border px-3 py-2 rounded" />
+          </div>
+          <div>
+            <button type="submit" class="w-full bg-indigo-600 text-white px-3 py-2 rounded">Sign up</button>
+          </div>
+          <p id="message" class="text-sm text-center"></p>
+        </form>
+      </div>
+    </section>
+
+    <section id="features" class="mt-12">
+      <h3 class="text-2xl font-bold mb-4">Features</h3>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="bg-white p-4 rounded shadow">Feature A</div>
+        <div class="bg-white p-4 rounded shadow">Feature B</div>
+        <div class="bg-white p-4 rounded shadow">Feature C</div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-white border-t">
+    <div class="max-w-5xl mx-auto px-6 py-6 text-sm text-gray-600">© YourSaaS</div>
+  </footer>
+
+<script>
+const form = document.getElementById('signupForm');
+const message = document.getElementById('message');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  message.textContent = 'Submitting...';
+  const payload = {
+    name: form.name.value.trim(),
+    email: form.email.value.trim(),
+    password: form.password.value
+  };
+  try {
+    const res = await fetch('/api/auth/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Something went wrong');
+    message.style.color = 'green';
+    message.textContent = data.message || 'Check your email to verify';
+    form.reset();
+  } catch (err) {
+    message.style.color = 'red';
+    message.textContent = err.message || 'Error';
+  }
+});
+</script>
+</body>
+</html>

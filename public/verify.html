@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Email Verification</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 flex items-center justify-center min-h-screen">
+
+  <div class="bg-white p-8 rounded shadow max-w-md w-full text-center">
+    <h1 class="text-2xl font-bold mb-4">Verifying your account...</h1>
+    <p id="status" class="text-gray-700">Please wait while we confirm your email.</p>
+    <div class="mt-6 flex justify-center">
+      <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  </div>
+
+  <script>
+    async function verifyUser() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const token = urlParams.get('token');
+      const statusEl = document.getElementById('status');
+
+      if (!token) {
+        statusEl.textContent = "Invalid verification link.";
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/auth/verify/${token}`);
+        if (res.redirected) {
+          // If backend sends redirect (thankyou.html), follow it
+          window.location.href = res.url;
+          return;
+        }
+        const text = await res.text();
+        statusEl.innerHTML = text;
+      } catch (err) {
+        statusEl.textContent = "Something went wrong during verification.";
+      }
+    }
+
+    verifyUser();
+  </script>
+</body>
+</html>
